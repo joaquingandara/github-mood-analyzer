@@ -2,6 +2,7 @@ package com.example.github_mood_analyzer.service;
 
 import com.example.github_mood_analyzer.client.GitHubClient;
 import com.example.github_mood_analyzer.dto.GitHubRepoDto;
+import com.example.github_mood_analyzer.dto.MoodResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -14,10 +15,21 @@ public class MoodService {
         this.gitHubClient = gitHubClient;
     }
 
-    public String analyzeRepoMood(String owner, String repo) {
+    public MoodResponse analyzeRepoMood(String owner, String repo) {
         GitHubRepoDto [] comments =
                 gitHubClient.getPullRequestComments(owner, repo);
 
+        String moodStatus =  calculateMood(comments);
+
+        return new MoodResponse(
+                owner + "/" + repo,
+                "pull_request_comments",
+                comments.length,
+                moodStatus
+        );
+    }
+
+    private static String calculateMood(GitHubRepoDto[] comments) {
         if (comments == null || comments.length == 0) {
             return "No comments";
         }

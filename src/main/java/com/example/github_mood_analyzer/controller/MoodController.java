@@ -1,5 +1,6 @@
 package com.example.github_mood_analyzer.controller;
 
+import com.example.github_mood_analyzer.dto.MoodResponse;
 import com.example.github_mood_analyzer.service.MoodService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,7 +18,7 @@ public class MoodController {
     }
 
     @GetMapping("/{owner}/{repo}")
-    public String mood(
+    public MoodResponse mood(
             @PathVariable String owner,
             @PathVariable String repo
     ) {

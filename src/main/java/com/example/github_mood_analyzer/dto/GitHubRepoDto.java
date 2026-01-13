@@ -11,6 +11,4 @@ public class GitHubRepoDto {
     public static class UserDto {
         private String login;
     }
-
-    // getters y setters
 }
