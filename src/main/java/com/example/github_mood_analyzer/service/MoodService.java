@@ -6,6 +6,7 @@ import com.example.github_mood_analyzer.dto.MoodResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Service
 public class MoodService {
@@ -16,7 +17,7 @@ public class MoodService {
     }
 
     public MoodResponse analyzeRepoMood(String owner, String repo) {
-        GitHubRepoDto [] comments =
+        List<GitHubRepoDto> comments =
                 gitHubClient.getPullRequestComments(owner, repo);
 
         String moodStatus =  calculateMood(comments);
@@ -24,23 +25,23 @@ public class MoodService {
         return new MoodResponse(
                 owner + "/" + repo,
                 "pull_request_comments",
-                comments.length,
+                comments.size(),
                 moodStatus
         );
     }
 
-    private static String calculateMood(GitHubRepoDto[] comments) {
-        if (comments == null || comments.length == 0) {
+    private static String calculateMood(List<GitHubRepoDto> comments) {
+        if (comments == null || comments.size() == 0) {
             return "No comments";
         }
 
-        long positive = Arrays.stream(comments)
+        long positive = comments.stream()
                 .filter(c -> c.getBody().toLowerCase().contains("good")
                         || c.getBody().toLowerCase().contains("great")
                         || c.getBody().toLowerCase().contains("thanks"))
                 .count();
 
-        if (positive > comments.length / 2) {
+        if (positive > comments.size() / 2) {
             return "Positive repo vibe";
         }
 
