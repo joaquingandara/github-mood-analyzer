@@ -10,15 +10,29 @@ import java.util.List;
 public class MoodService {
     private final GithubService githubService;
 
-    public MoodService(GithubService gitHubClient) {
+    private final SentimentAnalyzer sentimentAnalyzer;
+
+    public record SentimentResult(
+            double score,      // -1.0 → 1.0
+            SentimentLabel label
+    ) {}
+
+    public enum SentimentLabel {
+        POSITIVE,
+        NEUTRAL,
+        NEGATIVE
+    }
+
+    public MoodService(GithubService gitHubClient, SentimentAnalyzer sentimentAnalyzer) {
         this.githubService = gitHubClient;
+        this.sentimentAnalyzer = sentimentAnalyzer;
     }
 
     public MoodResponse analyzeRepoMood(String owner, String repo) {
         List<GitHubRepoDto> comments =
                 githubService.getFirstPagePullRequestComments(owner, repo);
 
-        String moodStatus =  calculateMood(comments);
+        String moodStatus =  calculateMood(comments).toString();
 
         return new MoodResponse(
                 owner + "/" + repo,
@@ -28,21 +42,22 @@ public class MoodService {
         );
     }
 
-    private static String calculateMood(List<GitHubRepoDto> comments) {
-        if (comments == null || comments.size() == 0) {
-            return "No comments";
+    public SentimentLabel calculateMood(List<GitHubRepoDto> comments) {
+
+        if (comments.isEmpty()) return SentimentLabel.NEUTRAL;
+
+        double totalScore = 0;
+
+        for (GitHubRepoDto comment : comments) {
+            SentimentResult result = sentimentAnalyzer.analyze(comment.getBody());
+            totalScore += result.score();
         }
 
-        long positive = comments.stream()
-                .filter(c -> c.getBody().toLowerCase().contains("good")
-                        || c.getBody().toLowerCase().contains("great")
-                        || c.getBody().toLowerCase().contains("thanks"))
-                .count();
+        double avg = totalScore / comments.size();
 
-        if (positive > comments.size() / 2) {
-            return "Positive repo vibe";
-        }
-
-        return "Neutral";
+        if (avg > 0.2) return SentimentLabel.POSITIVE;
+        if (avg < -0.2) return SentimentLabel.NEGATIVE;
+        return SentimentLabel.NEUTRAL;
     }
+
 }

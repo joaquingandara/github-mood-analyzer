@@ -50,7 +50,6 @@ public class GitHubClient {
         return body == null ? List.of() : Arrays.asList(body);
     }
 
-
     private static void logGithubApiRequestsLimit(ResponseEntity<GitHubRepoDto[]> response) {
         HttpHeaders headers = response.getHeaders();
         String remaining = headers.getFirst("X-RateLimit-Remaining");
