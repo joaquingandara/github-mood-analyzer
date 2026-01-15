@@ -37,4 +37,4 @@ out/
 .vscode/
 
 .env
-application-local.yml
+.yml
