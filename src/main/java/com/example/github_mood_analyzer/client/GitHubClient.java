@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -29,35 +30,10 @@ public class GitHubClient {
         this.restTemplate = new RestTemplate();
     }
 
-    public List<GitHubRepoDto> getAllPullRequestComments(String owner, String repo) {
-        List<GitHubRepoDto> allComments = new ArrayList<>();
-        int page = 1;
-
-        while (true) {
-            List<GitHubRepoDto> pageComments = fetchPullRequestCommentsPage(owner, repo, page);
-
-            if (pageComments.isEmpty()) {
-                break;
-            }
-
-            allComments.addAll(pageComments);
-            page++;
-        }
-
-        return allComments;
-    }
-
-    // For testing purposes
-    public List<GitHubRepoDto> getFirstPagePullRequestComments(String owner, String repo) {
-        return fetchPullRequestCommentsPage(owner, repo, 1);
-    }
-
-    private List<GitHubRepoDto> fetchPullRequestCommentsPage(String owner, String repo, int page) {
+    public List<GitHubRepoDto> fetchPullRequestCommentsPage(String owner, String repo, int page) {
         String url = String.format(
                 "https://api.github.com/repos/%s/%s/pulls/comments?per_page=100&page=%d",
-                owner,
-                repo,
-                page
+                owner, repo, page
         );
 
         ResponseEntity<GitHubRepoDto[]> response =
@@ -71,9 +47,9 @@ public class GitHubClient {
         logGithubApiRequestsLimit(response);
 
         GitHubRepoDto[] body = response.getBody();
-
-        return (body == null || body.length == 0) ? List.of() : Arrays.asList(body);
+        return body == null ? List.of() : Arrays.asList(body);
     }
+
 
     private static void logGithubApiRequestsLimit(ResponseEntity<GitHubRepoDto[]> response) {
         HttpHeaders headers = response.getHeaders();

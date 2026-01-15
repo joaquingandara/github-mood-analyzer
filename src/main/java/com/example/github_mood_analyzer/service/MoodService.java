@@ -1,6 +1,5 @@
 package com.example.github_mood_analyzer.service;
 
-import com.example.github_mood_analyzer.client.GitHubClient;
 import com.example.github_mood_analyzer.dto.GitHubRepoDto;
 import com.example.github_mood_analyzer.dto.MoodResponse;
 import org.springframework.stereotype.Service;
@@ -9,15 +8,15 @@ import java.util.List;
 
 @Service
 public class MoodService {
-    private final GitHubClient gitHubClient;
+    private final GithubService githubService;
 
-    public MoodService(GitHubClient gitHubClient) {
-        this.gitHubClient = gitHubClient;
+    public MoodService(GithubService gitHubClient) {
+        this.githubService = gitHubClient;
     }
 
     public MoodResponse analyzeRepoMood(String owner, String repo) {
         List<GitHubRepoDto> comments =
-                gitHubClient.getFirstPagePullRequestComments(owner, repo);
+                githubService.getFirstPagePullRequestComments(owner, repo);
 
         String moodStatus =  calculateMood(comments);
 
