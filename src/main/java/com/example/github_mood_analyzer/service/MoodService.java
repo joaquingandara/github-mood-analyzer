@@ -5,7 +5,6 @@ import com.example.github_mood_analyzer.dto.GitHubRepoDto;
 import com.example.github_mood_analyzer.dto.MoodResponse;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -18,7 +17,7 @@ public class MoodService {
 
     public MoodResponse analyzeRepoMood(String owner, String repo) {
         List<GitHubRepoDto> comments =
-                gitHubClient.getPullRequestComments(owner, repo);
+                gitHubClient.getFirstPagePullRequestComments(owner, repo);
 
         String moodStatus =  calculateMood(comments);
 
