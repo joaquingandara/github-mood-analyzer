@@ -1,36 +1,13 @@
 # GitHub Repository Mood Analyzer
 
-Backend project built with **Java and Spring Boot** that consumes the **GitHub REST API** to analyze pull request review comments from repositories.
+Backend project built with **Java and Spring Boot** that consumes the **GitHub REST API** to fetch and analyze pull request review comments from public repositories.
 
-The goal of this project is to explore API integration, clean backend architecture, and text processing techniques. In future iterations, the project will be extended with **NLP-based sentiment analysis** to evaluate the overall mood of a repository.
-
----
-
-## Features
-
-- Consume GitHub REST API
-- Fetch pull request review comments from repositories
-- Expose REST endpoints using Spring Boot
-- Modular and extensible architecture
-- Ready to evolve into NLP-based sentiment analysis
-
----
+The project is designed as a backend-focused exercise, covering API integration, pagination, DTO mapping, and clean service separation. It also includes **basic NLP-based sentiment analysis** to infer the overall mood of code review discussions, with the goal of understanding how developers communicate during pull requests.
 
 ## Tech Stack
 
-- **Java 17**
-- **Spring Boot**
-- **Gradle**
-- **GitHub REST API**
-- RESTful API design
-
----
-
-## Current Status
-
-✅ GitHub API integration  
-✅ REST endpoints  
-✅ Data mapping using DTOs  
-
-❌ Sentiment / mood analysis (planned)  
-❌ NLP integration (future work)
+- Java 17  
+- Spring Boot  
+- Gradle  
+- GitHub REST API  
+- Basic NLP / text analysis  
