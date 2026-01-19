@@ -12,15 +12,18 @@ public class MoodService {
 
     private final StanfordSentimentAnalyzer sentimentAnalyzer;
 
+    private final BadWordDetector badWordDetector;
+
     public enum SentimentLabel {
         POSITIVE,
         NEUTRAL,
         NEGATIVE
     }
 
-    public MoodService(GithubService gitHubClient, StanfordSentimentAnalyzer sentimentAnalyzer) {
+    public MoodService(GithubService gitHubClient, StanfordSentimentAnalyzer sentimentAnalyzer, BadWordDetector badWordDetector) {
         this.githubService = gitHubClient;
         this.sentimentAnalyzer = sentimentAnalyzer;
+        this.badWordDetector = badWordDetector;
     }
 
     public MoodResponse analyzeRepoMood(String owner, String repo) {
@@ -29,11 +32,14 @@ public class MoodService {
 
         String moodStatus =  calculateMood(comments).toString();
 
+        boolean hasBadWords =  comments.stream().anyMatch(comment -> badWordDetector.containsBadWords(comment.getBody()));
+
         return new MoodResponse(
                 owner + "/" + repo,
                 "pull_request_comments",
                 comments.size(),
-                moodStatus
+                moodStatus,
+                hasBadWords ? "Contains bad words" : "No bad words"
         );
     }
 
@@ -58,5 +64,6 @@ public class MoodService {
         if (avg < -0.2) return SentimentLabel.NEGATIVE;
         return SentimentLabel.NEUTRAL;
     }
+
 
 }
