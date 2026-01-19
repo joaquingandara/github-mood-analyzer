@@ -10,12 +10,7 @@ import java.util.List;
 public class MoodService {
     private final GithubService githubService;
 
-    private final SentimentAnalyzer sentimentAnalyzer;
-
-    public record SentimentResult(
-            double score,      // -1.0 → 1.0
-            SentimentLabel label
-    ) {}
+    private final StanfordSentimentAnalyzer sentimentAnalyzer;
 
     public enum SentimentLabel {
         POSITIVE,
@@ -23,7 +18,7 @@ public class MoodService {
         NEGATIVE
     }
 
-    public MoodService(GithubService gitHubClient, SentimentAnalyzer sentimentAnalyzer) {
+    public MoodService(GithubService gitHubClient, StanfordSentimentAnalyzer sentimentAnalyzer) {
         this.githubService = gitHubClient;
         this.sentimentAnalyzer = sentimentAnalyzer;
     }
@@ -49,8 +44,12 @@ public class MoodService {
         double totalScore = 0;
 
         for (GitHubRepoDto comment : comments) {
-            SentimentResult result = sentimentAnalyzer.analyze(comment.getBody());
-            totalScore += result.score();
+            SentimentLabel result = sentimentAnalyzer.analyze(comment.getBody());
+            totalScore += switch (result) {
+                case POSITIVE -> 1;
+                case NEGATIVE -> 0;
+                case NEUTRAL-> -1;
+            };
         }
 
         double avg = totalScore / comments.size();
