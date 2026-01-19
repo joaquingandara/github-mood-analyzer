@@ -2,7 +2,7 @@
 
 Backend project built with **Java and Spring Boot** that consumes the **GitHub REST API** to fetch and analyze pull request review comments from public repositories.
 
-The project is designed as a backend-focused exercise, covering API integration, pagination, DTO mapping, and clean service separation. It also includes **basic NLP-based sentiment analysis** to infer the overall mood of code review discussions, with the goal of understanding how developers communicate during pull requests.
+The project focuses on backend architecture, API integration, pagination handling, and text analysis. It includes **basic NLP-based sentiment analysis** to infer the overall mood of pull request discussions, as well as a **rule-based bad word detector** that flags potentially toxic or unprofessional language in review comments.
 
 ## Tech Stack
 
@@ -11,3 +11,4 @@ The project is designed as a backend-focused exercise, covering API integration,
 - Gradle  
 - GitHub REST API  
 - Basic NLP / text analysis  
+- Rule-based bad word detection
